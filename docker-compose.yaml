@@ -9,6 +9,9 @@ services:
       - db
     environment:
       - SYMFONY_ENV=dev
+      - PHP_IDE_CONFIG=serverName=docker
+      - PHP_XDEBUG_ENABLED=1
+      - XDEBUG_CONFIG=remote_host=10.254.254.254
     volumes:
       - ./:/app/symfony:rw
       - ./web:/app/symfony/web:rw
