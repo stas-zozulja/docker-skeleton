@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    depends_on:
+      - db
+    environment:
+      - SYMFONY_ENV=dev
+    volumes:
+      - ./:/app/symfony:rw
+      - ./web:/app/symfony/web:rw
+      - /app/symfony/var/
+      - /app/symfony/var/cache/
+      - /app/symfony/var/logs/
+      - /app/symfony/var/sessions/
+      - /app/symfony/vendor/
+  db:
+    build:
+      context: ./docker/db
+      dockerfile: ./Dockerfile
+    environment:
+      - MYSQL_DATABASE=symfony_db
+      # You should definitely change the password in production
+      - MYSQL_USER=symfony
+      - MYSQL_PASSWORD=symfony
+      - MYSQL_RANDOM_ROOT_PASSWORD=true
+    volumes:
+      - db-data:/var/lib/mysql:rw
+  nginx:
+    build:
+      context: ./docker/nginx
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./web:/app/symfony/web:ro
+    ports:
+      - "8080:80"
+
+volumes:
+#  app-web: {}
+  db-data: {}
